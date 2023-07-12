@@ -1,98 +1,42 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const { suite } = require('selenium-webdriver/testing');
+const assert = require('assert');
 
-suite(function (env) {
-  describe('Library app scenarios ', function () {
-    let driver;
+describe('Library app scenarios', function () {
+  let driver;
 
-    before(async function () {
-      driver = new Builder().forBrowser('chrome').build();
-      driver.get('https://library-app.firebaseapp.com/');
-    });
+  before(async function () {
+    this.timeout(10000);
+    driver = await new Builder().forBrowser('chrome').build();
+    
+  });
 
-    after(() => driver.quit());
+  after(async function () {
+    await driver.quit();
+  });
 
-    it('Changes button opacity upon email being filled out', async function () {
-      var submitBtn = driver.findElement(By.css('body > main > section > div > div.col-md-2 > button'));
-      driver.findElement(By.css('input')).sendKeys('user123@gmail.com');
-      driver.wait(function () {
-        return submitBtn.getCssValue('opacity')
-          .then(function (result) {
-            return result === '1';
-          });
-      }, 5000)
-    });
-    it('GetID for success click', async function () {
-      var submitBtn = driver.findElement(By.css('body > main > section > div > div.col-md-2 > button'));
-      driver.findElement(By.css('input')).sendKeys('user123');
-      submitBtn.click();
-      driver.wait(until.elementLocated(By.css('.alert-success')), 10000)
-        .then(function () {
-          return driver.findElement(By.css('.alert-success')).getText();
-        })
-        .then(function (txt) {
-          console.log('Alert success text is : ' + txt);
-        })
+  it('Changes button opacity upon email being filled out', async function () {
+    await driver.get('https://library-app.firebaseapp.com/');
+    const submitBtn = await driver.findElement(By.css('body > main > section > div > div.col-md-2 > button'));
+    await driver.findElement(By.css('input')).sendKeys('user123@gmail.com');
+    await driver.wait(async function () {
+      const result = await submitBtn.getCssValue('opacity');
+      return result === '1';
+    }, 10000);
+  });
 
-    });
-    it('Find all nav', async function () {
-      driver.findElement(By.css('nav')).getText().then(function (txt) {
-        console.log(txt)
-      } );
-    });
+  it('Get ID for success click', async function () {
+    await driver.get('https://library-app.firebaseapp.com/');
+    const submitBtn = await driver.findElement(By.css('body > main > section > div > div.col-md-2 > button'));
+    await driver.findElement(By.css('input')).sendKeys('user123@gmail.com');
+    await submitBtn.click();
+    const successAlert = await driver.wait(until.elementLocated(By.css('.alert-success')), 10000);
+    const successText = await successAlert.getText();
+    console.log('Alert success text is: ' + successText);
+  });
+
+  it('Find all nav', async function () {
+    await driver.get('https://library-app.firebaseapp.com/');
+    const navText = await driver.findElement(By.css('nav')).getText();
+    console.log(navText);
   });
 });
-
-
-
-
-
-
-
-
-
-driver.wait(until.elementLocated(By.css('.alert-success')), 10000)
-  .then(function () {
-    return driver.findElement(By.css('.alert-success')).getText();
-  })
-  .then(function (txt) {
-    console.log('Alert success text is : ' + txt);
-  })
-  .catch(function (error) {
-    // Handle any errors that occur
-    console.log("Error: " + error);
-  })
-
-
-
-
-// driver.wait(until.elementLocated(By.css('.alert-success')), 10000)
-//   .then(function () {
-//     return driver.findElement(By.css('.alert-success')).getText();
-//   })
-//   .then(function (txt) {
-//     console.log('Alert success text is : ' + txt);
-//   })
-//   .catch(function (error) {
-//     // Handle any errors that occur
-//     console.log("Error: " + error);
-//   })
-//   .finally(function () {
-//     driver.quit();
-//   });
-
-// driver.findElements(By.css('nav li'))
-//   .then(function (elements) {
-//     // Map and log the text of each element
-//     elements.map(function (element) {
-//       element.getText().then(function (txt) {
-//         console.log('txt all menu : ' + txt)
-//       });
-//     });
-//   })
-//   .catch(function (error) {
-//     // Handle any errors that occur
-//     console.log("Error: " + error);
-//   });
-
-
